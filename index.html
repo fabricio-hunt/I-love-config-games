@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechKid - Jogo Educativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #FFF8F0;
+      --card: #FFFFFF;
+      --text: #2D2D2D;
+      --text-muted: #6B6B6B;
+      --border: #E8E0D8;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1A1A2E;
+        --card: #16213E;
+        --text: #F0F0F0;
+        --text-muted: #A0A0B0;
+        --border: #2A2A4A;
+        --shadow: 0 4px 20px rgba(0,0,0,0.3);
+      }
+    }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 600px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+      padding: 20px 0;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #FFE66D, #A8E6CF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .phase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+    }
+    .phase-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px 16px;
+      text-align: center;
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      min-height: 140px;
+      justify-content: center;
+    }
+    .phase-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+    .phase-card.locked {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .phase-card.locked:hover {
+      transform: none;
+    }
+    .phase-emoji { font-size: 3rem; line-height: 1; }
+    .phase-title { font-size: 1rem; font-weight: 700; }
+    .phase-sub { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+    .stars {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .star { color: #FFE66D; font-size: 1.2rem; }
+    .star.empty { color: var(--border); }
+    .phase-card.phase1 { border-color: #FF6B6B; }
+    .phase-card.phase2 { border-color: #4ECDC4; }
+    .phase-card.phase3 { border-color: #FFE66D; }
+    .phase-card.phase4 { border-color: #A8E6CF; }
+    .phase-card.phase5 { border-color: #C3B1E1; }
+    .phase-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-top: 8px;
+    }
+    .badge-done { background: #EAF3DE; color: #3B6D11; }
+    .badge-locked { background: #F0F0F0; color: var(--text-muted); }
+    @media (prefers-color-scheme: dark) {
+      .badge-done { background: #173404; color: #C0DD97; }
+      .badge-locked { background: #2A2A4A; color: var(--text-muted); }
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>TechKid</h1>
+      <p class="subtitle">Jogo educativo de tecnologia para crianças</p>
+    </header>
+
+    <div class="phase-grid" id="phaseGrid"></div>
+
+    <footer>
+      <p>Feito com carinho para crianças de 5 anos 💛</p>
+    </footer>
+  </div>
+
+  <script>
+    const phases = [
+      { id: 1, emoji: '📱', title: 'Tela do Celular', sub: 'Organizar apps', path: 'phase1/phase.html', color: 'phase1' },
+      { id: 2, emoji: '📶', title: 'Conectar Wi-Fi', sub: 'Sequência de passos', path: 'phase2/phase.html', color: 'phase2' },
+      { id: 3, emoji: '🖥️', title: 'Montar PC', sub: 'Encaixar peças', path: 'phase3/phase.html', color: 'phase3' },
+      { id: 4, emoji: '🤖', title: 'Programar Robô', sub: 'Comandos visuais', path: 'phase4/phase.html', color: 'phase4' },
+      { id: 5, emoji: '🧠', title: 'Falar com IA', sub: 'Chat com robô', path: 'phase5/phase.html', color: 'phase5' },
+    ];
+
+    const grid = document.getElementById('phaseGrid');
+
+    phases.forEach((phase, index) => {
+      const stars = getStars(phase.id);
+      const done = localStorage.getItem('phase' + phase.id + '_done') === 'true';
+      const unlocked = index === 0 || localStorage.getItem('phase' + index + '_done') === 'true';
+
+      const card = document.createElement('a');
+      card.className = `phase-card ${phase.color} ${!unlocked ? 'locked' : ''}`;
+      card.href = unlocked ? phase.path : '#';
+      card.onclick = (e) => {
+        if (!unlocked) e.preventDefault();
+      };
+
+      card.innerHTML = `
+        <div class="phase-emoji">${phase.emoji}</div>
+        <div class="phase-title">${phase.title}</div>
+        <div class="phase-sub">${phase.sub}</div>
+        <div class="stars">
+          ${[1,2,3].map(i => `<span class="star ${i > stars ? 'empty' : ''}">★</span>`).join('')}
+        </div>
+        <span class="phase-badge ${done ? 'badge-done' : (unlocked ? 'badge-locked' : 'badge-locked')}">
+          ${done ? '✓ Concluído' : (unlocked ? 'Jogar' : 'Bloqueado')}
+        </span>
+      `;
+      grid.appendChild(card);
+    });
+
+    function getStars(phaseId) {
+      const stars = localStorage.getItem('phase' + phaseId + '_stars');
+      return stars ? parseInt(stars) : 0;
+    }
+  </script>
+</body>
+</html>

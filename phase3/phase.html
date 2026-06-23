@@ -562,12 +562,12 @@
       var star = document.getElementById('star' + i);
       star.classList.remove('earned');
       if (i <= stars) {
-        (function(idx) {
+        (function(idx, el) {
           setTimeout(function() {
-            star.classList.add('earned');
+            el.classList.add('earned');
             playSound('correct');
           }, idx * 300);
-        })(i);
+        })(i, star);
       }
     }
   }

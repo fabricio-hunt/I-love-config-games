@@ -7,7 +7,7 @@ const TechKidStorage = (() => {
 
   /**
    * Save phase completion and star rating.
-   * @param {number} phaseId - Phase number (1–5)
+   * @param {number} phaseId - Phase number (1–6)
    * @param {number} stars   - Star count (1, 2, or 3)
    */
   function savePhase(phaseId, stars) {
@@ -69,7 +69,7 @@ const TechKidStorage = (() => {
    * Reset ALL phase progress (for testing / dev use).
    */
   function resetAll() {
-    for (let i = 1; i <= 5; i++) resetPhase(i);
+    for (let i = 1; i <= 6; i++) resetPhase(i);
   }
 
   return { savePhase, getStars, isDone, isUnlocked, calcStars, resetPhase, resetAll };

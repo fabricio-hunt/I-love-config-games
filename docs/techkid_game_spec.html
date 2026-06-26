@@ -287,13 +287,13 @@
       <span style="font-size:28px">🎮</span>
       <div>
         <h1>TechKid — Spec v1.0</h1>
-        <p>Jogo educativo de 5 fases · HTML/JS puro · Local · Para crianças de 5 anos</p>
+        <p>Jogo educativo de 6 fases · HTML/JS puro · Local · Para crianças de 5 anos</p>
       </div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:0.75rem">
       <span class="chip chip-b">JS + HTML + CSS</span>
       <span class="chip chip-g">Sem backend</span>
-      <span class="chip chip-a">5 fases independentes</span>
+      <span class="chip chip-a">6 fases independentes</span>
       <span class="chip chip-p">LocalStorage para progresso</span>
       <span class="chip chip-r">IA na fase 5</span>
     </div>
@@ -324,6 +324,10 @@
     <div class="struct-box">
       <div class="sb-title">📁 /phase5/</div>
       <div class="sb-sub">Falar com IA</div>
+    </div>
+    <div class="struct-box">
+      <div class="sb-title">📁 /phase6/</div>
+      <div class="sb-sub">Configurar smartwatch</div>
     </div>
   </div>
   <div class="block" style="margin-top:0.75rem">
@@ -443,6 +447,26 @@
       ],
       ai_prompt: "Crie HTML único de chat infantil com a API Anthropic (fetch para /v1/messages). Robô responde em 1-2 frases com emojis. Botões de perguntas prontas grandes. System prompt infantil. Balões de conversa. Paleta #C3B1E1. Fonte Nunito. Botão voltar. Para 5 anos.",
       chips: ["Claude Haiku", "Botões de perguntas", "Balões de chat", "System prompt infantil"]
+    },
+    {
+      id: 6,
+      emoji: "⌚",
+      title: "Fase 6 — Configurar o smartwatch",
+      sub: "Relógio inteligente",
+      color: "#95D5B2",
+      colorChip: "chip-g",
+      now: false,
+      desc: "A criança configura um smartwatch grande e colorido. Ela toca nos apps certos e escolhe funções úteis: ajustar horas, contar passos, medir batimentos e criar lembrete de água.",
+      mechanics: [
+        { k: "Interação", v: "Toques em botões grandes dentro da tela do smartwatch" },
+        { k: "Missões", v: "4 tarefas: hora, passos, coração e água" },
+        { k: "Feedback", v: "Tela pisca verde ao acertar e chacoalha ao errar" },
+        { k: "Visual", v: "Smartwatch grande com pulseira, brilho, apps coloridos e status" },
+        { k: "Vitória", v: "Smartwatch pronto → fogos CSS + som de celebração" },
+        { k: "Estrelas", v: "3 sem erro · 2 com até 2 erros · 1 com 3+ erros" },
+      ],
+      ai_prompt: "Crie HTML único de jogo infantil para configurar um smartwatch. A criança toca em apps grandes no relógio e escolhe configurações corretas: horas, passos, batimentos e lembrete de água. Paleta #95D5B2. Fonte Nunito. Sons com Web Audio API. Fogos CSS. LocalStorage phase6_done e phase6_stars. Botão voltar. Para 5 anos.",
+      chips: ["Smartwatch", "Toque em apps", "Hábitos saudáveis", "Fogos CSS"]
     }
   ];
 

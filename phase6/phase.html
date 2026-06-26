@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechKid — Fase 6: Configurar Smartwatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #95D5B2;
+      --primary-dark: #2D8A57;
+      --primary-light: #D8F3DC;
+      --accent: #FFB703;
+      --pink: #FF9FF3;
+      --blue: #80D8FF;
+      --purple: #C3B1E1;
+      --coral: #FF6B6B;
+      --text: #23382C;
+      --muted: #5F7F6C;
+      --card: #FFFFFF;
+      --bg: #F0FFF5;
+      --shadow: 0 14px 40px rgba(45, 138, 87, 0.18);
+      --radius: 28px;
+      --radius-sm: 16px;
+      --green: #52C41A;
+      --red: #FF4444;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Nunito', sans-serif;
+      background:
+        radial-gradient(circle at 15% 12%, rgba(255, 183, 3, 0.28), transparent 26%),
+        radial-gradient(circle at 82% 18%, rgba(195, 177, 225, 0.38), transparent 28%),
+        radial-gradient(circle at 50% 90%, rgba(128, 216, 255, 0.32), transparent 32%),
+        linear-gradient(135deg, #E7FFF0 0%, #F5FFFA 52%, #E8F8FF 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 980px;
+      min-height: calc(100vh - 32px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .back-btn, .phase-label, .error-counter {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 9px 17px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 5px 18px rgba(45, 138, 87, 0.14);
+      border: 2px solid rgba(149, 213, 178, 0.35);
+      font-weight: 800;
+      text-decoration: none;
+      color: var(--primary-dark);
+    }
+
+    .back-btn { cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .back-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45, 138, 87, 0.22); }
+    .phase-label { background: var(--primary-dark); color: white; border-color: transparent; }
+    .error-counter { color: var(--muted); }
+
+    .title-area { text-align: center; }
+    h1 {
+      font-size: clamp(1.55rem, 4.8vw, 2.7rem);
+      line-height: 1.05;
+      font-weight: 900;
+      color: var(--primary-dark);
+      text-shadow: 0 2px 0 rgba(255,255,255,0.8);
+    }
+    .title-area p {
+      margin-top: 6px;
+      font-size: clamp(0.92rem, 2.5vw, 1.08rem);
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .game-board {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr minmax(290px, 360px) 1fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.88);
+      border: 2px solid rgba(149, 213, 178, 0.42);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .helper-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .helper-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .helper-text {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      background: #F4FFF8;
+      border: 2px dashed rgba(149, 213, 178, 0.65);
+      font-weight: 800;
+      color: var(--muted);
+      transition: 0.25s ease;
+    }
+
+    .task-row.done {
+      background: #EAF7DE;
+      border-style: solid;
+      color: #3B6D11;
+      transform: scale(1.02);
+    }
+
+    .task-icon { font-size: 1.45rem; width: 34px; text-align: center; }
+
+    .watch-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      min-height: 620px;
+      position: relative;
+    }
+
+    .strap {
+      width: 138px;
+      height: 135px;
+      background: linear-gradient(90deg, #3B3B50, #5A6078 45%, #3B3B50);
+      border: 7px solid #2B2D42;
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.12);
+    }
+    .strap.top { border-radius: 42px 42px 18px 18px; margin-bottom: -30px; }
+    .strap.bottom { border-radius: 18px 18px 42px 42px; margin-top: -30px; }
+
+    .watch {
+      width: min(82vw, 330px);
+      aspect-ratio: 0.86;
+      border-radius: 72px;
+      background: linear-gradient(135deg, #24263A, #111426);
+      padding: 18px;
+      box-shadow:
+        0 30px 55px rgba(17, 20, 38, 0.28),
+        inset 0 0 0 8px #424861,
+        inset 0 0 0 13px #1E2235;
+      position: relative;
+      z-index: 2;
+    }
+
+    .watch::before {
+      content: '';
+      position: absolute;
+      right: -10px;
+      top: 42%;
+      width: 18px;
+      height: 62px;
+      border-radius: 0 15px 15px 0;
+      background: linear-gradient(#4A5068, #232638);
+      box-shadow: 4px 6px 16px rgba(0,0,0,0.2);
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 55px;
+      background:
+        radial-gradient(circle at 18% 14%, rgba(255,255,255,0.22), transparent 19%),
+        linear-gradient(160deg, #173B35 0%, #17213B 54%, #311A44 100%);
+      border: 5px solid #0B101C;
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 0 25px rgba(0,0,0,0.42);
+      color: white;
+    }
+
+    .screen.shake-red { animation: shakeRed 0.5s ease; }
+    .screen.flash-green { animation: flashGreen 0.55s ease; }
+
+    .screen-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 55% 34%, rgba(149,213,178,0.34), transparent 38%);
+      pointer-events: none;
+    }
+
+    .watch-status {
+      position: absolute;
+      top: 13px;
+      left: 22px;
+      right: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 900;
+      opacity: 0.95;
+      z-index: 2;
+    }
+
+    .watch-content {
+      height: 100%;
+      padding: 42px 18px 18px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+    }
+
+    .watch-face {
+      width: 100%;
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      min-height: 135px;
+    }
+
+    .big-icon {
+      font-size: 3.5rem;
+      line-height: 1;
+      filter: drop-shadow(0 7px 10px rgba(0,0,0,0.25));
+      animation: floaty 2.6s ease-in-out infinite;
+    }
+
+    .watch-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      line-height: 1.08;
+    }
+
+    .watch-subtitle {
+      font-size: 0.82rem;
+      font-weight: 800;
+      opacity: 0.86;
+      line-height: 1.18;
+      min-height: 38px;
+    }
+
+    .watch-value {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #E9FF70;
+      text-shadow: 0 3px 10px rgba(233,255,112,0.25);
+      min-height: 42px;
+    }
+
+    .watch-apps {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .app-btn {
+      min-height: 68px;
+      border: 3px solid rgba(255,255,255,0.23);
+      border-radius: 24px;
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      touch-action: manipulation;
+      box-shadow: inset 0 -5px 0 rgba(0,0,0,0.18), 0 5px 12px rgba(0,0,0,0.14);
+      transition: transform 0.16s ease, filter 0.16s ease;
+    }
+
+    .app-btn span:first-child { font-size: 1.55rem; line-height: 1; }
+    .app-btn:hover, .app-btn:focus-visible { transform: translateY(-3px) scale(1.03); filter: brightness(1.07); outline: none; }
+    .app-btn:active { transform: scale(0.96); }
+    .app-btn.done { opacity: 0.72; border-color: rgba(82,196,26,0.8); }
+    .app-btn.needed { animation: pulseNeeded 1.2s ease-in-out infinite; }
+
+    .color-time { background: linear-gradient(135deg, #4ECDC4, #238C86); }
+    .color-steps { background: linear-gradient(135deg, #FFE66D, #F59E0B); color: #3B2D00; }
+    .color-heart { background: linear-gradient(135deg, #FF6B6B, #C73650); }
+    .color-water { background: linear-gradient(135deg, #80D8FF, #2980B9); }
+
+    .action-pad {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .choice-title {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+      text-align: center;
+    }
+
+    .choice-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .choice-btn {
+      min-height: 58px;
+      border-radius: 19px;
+      border: 0;
+      padding: 10px 12px;
+      background: white;
+      box-shadow: 0 7px 18px rgba(45, 138, 87, 0.12), inset 0 -4px 0 rgba(149,213,178,0.22);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.94rem;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      touch-action: manipulation;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .choice-btn:hover, .choice-btn:focus-visible { transform: translateY(-2px); outline: 3px solid rgba(149,213,178,0.55); }
+    .choice-btn:active { transform: scale(0.97); }
+
+    .reset-btn {
+      min-height: 48px;
+      border-radius: 999px;
+      border: 2px solid rgba(149,213,178,0.55);
+      background: #F4FFF8;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+      cursor: pointer;
+    }
+
+    .hint-bubble {
+      position: absolute;
+      left: 50%;
+      bottom: 11px;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: 84%;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.92);
+      color: var(--primary-dark);
+      padding: 7px 13px;
+      font-size: 0.76rem;
+      font-weight: 900;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+      z-index: 3;
+    }
+
+    .completion-ribbon {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: white;
+      border: 3px solid rgba(45,138,87,0.22);
+      transition: 0.25s ease;
+    }
+    .mini-dot.done { background: var(--green); border-color: white; box-shadow: 0 0 0 4px rgba(82,196,26,0.18); }
+
+    .fireworks {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .victory-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(13, 25, 19, 0.48);
+      backdrop-filter: blur(4px);
+      z-index: 900;
+    }
+    .victory-overlay.show { display: flex; animation: fadeIn 0.25s ease both; }
+
+    .victory-card {
+      width: min(92vw, 460px);
+      border-radius: 34px;
+      background: white;
+      padding: 28px 22px;
+      text-align: center;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.25);
+      border: 4px solid var(--primary);
+      animation: popIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .victory-emoji { display: block; font-size: 4rem; margin-bottom: 8px; }
+    .victory-title { font-size: 2rem; font-weight: 900; color: var(--primary-dark); }
+    .victory-subtitle { margin: 8px 0 16px; font-weight: 800; color: var(--muted); }
+    .stars-display { display: flex; justify-content: center; gap: 8px; margin: 10px 0 20px; }
+    .star-big { font-size: 2.4rem; filter: grayscale(1); opacity: 0.34; transform: scale(0.7); transition: 0.35s ease; }
+    .star-big.earned { filter: none; opacity: 1; transform: scale(1.1); }
+
+    .victory-btns { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      min-height: 48px;
+      border-radius: 999px;
+      border: 0;
+      padding: 11px 18px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: inherit;
+    }
+    .btn-primary { background: var(--primary-dark); color: white; }
+    .btn-secondary { background: var(--primary-light); color: var(--primary-dark); }
+
+    @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+    @keyframes pulseNeeded { 0%,100% { box-shadow: inset 0 -5px 0 rgba(0,0,0,0.18), 0 0 0 0 rgba(255,255,255,0.0); } 50% { box-shadow: inset 0 -5px 0 rgba(0,0,0,0.18), 0 0 0 7px rgba(255,255,255,0.22); } }
+    @keyframes flashGreen {
+      0% { transform: scale(1); box-shadow: inset 0 0 25px rgba(0,0,0,0.42); }
+      35% { transform: scale(1.025); box-shadow: inset 0 0 25px rgba(0,0,0,0.42), 0 0 0 10px rgba(82,196,26,0.38); }
+      100% { transform: scale(1); box-shadow: inset 0 0 25px rgba(0,0,0,0.42); }
+    }
+    @keyframes shakeRed {
+      0%,100% { transform: translateX(0); }
+      15% { transform: translateX(-9px) rotate(-1deg); }
+      30% { transform: translateX(9px) rotate(1deg); }
+      45% { transform: translateX(-7px); }
+      60% { transform: translateX(7px); }
+      75% { transform: translateX(-4px); }
+      90% { transform: translateX(4px); }
+    }
+    @keyframes popIn { 0% { transform: scale(0.65) rotate(-4deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes spark-fly { 0% { transform: translate(0,0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+
+    @media (max-width: 820px) {
+      .game-board { grid-template-columns: 1fr; }
+      .watch-stage { min-height: auto; order: 1; }
+      .helper-card { order: 2; }
+      .action-pad { order: 3; }
+      .panel { padding: 14px; }
+      .strap { height: 82px; width: 122px; }
+      .watch { width: min(86vw, 310px); }
+    }
+
+    @media (max-width: 420px) {
+      body { padding: 10px; }
+      .page { min-height: calc(100vh - 20px); }
+      .top-bar { justify-content: center; }
+      .back-btn, .phase-label, .error-counter { padding: 8px 12px; font-size: 0.82rem; }
+      .watch { border-radius: 58px; padding: 14px; }
+      .screen { border-radius: 45px; }
+      .watch-apps { gap: 8px; }
+      .app-btn { min-height: 62px; border-radius: 20px; font-size: 0.72rem; }
+      .choice-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="fireworks" id="fireworks"></div>
+
+  <main class="page">
+    <div class="top-bar">
+      <a class="back-btn" href="../index.html">← Menu</a>
+      <div class="phase-label">Fase 6 · Smartwatch</div>
+      <div class="error-counter">Tentativas: <span id="errorCount">0</span></div>
+    </div>
+
+    <section class="title-area" aria-live="polite">
+      <h1>Configure seu smartwatch!</h1>
+      <p>Toque no app certo e escolha a configuração correta.</p>
+    </section>
+
+    <section class="game-board">
+      <aside class="panel helper-card">
+        <div class="helper-title">🧭 Missões do relógio</div>
+        <p class="helper-text">Complete as 4 funções do smartwatch para deixá-lo pronto para usar!</p>
+        <div class="task-list" id="taskList"></div>
+      </aside>
+
+      <section class="watch-stage" aria-label="Smartwatch grande">
+        <div class="strap top"></div>
+        <div class="watch">
+          <div class="screen" id="watchScreen">
+            <div class="screen-glow"></div>
+            <div class="watch-status"><span id="watchClock">09:30</span><span>🔋 100%</span></div>
+            <div class="watch-content">
+              <div class="watch-face">
+                <div class="big-icon" id="bigIcon">⌚</div>
+                <div class="watch-title" id="watchTitle">Pronto para configurar</div>
+                <div class="watch-subtitle" id="watchSubtitle">Comece pela missão destacada.</div>
+                <div class="watch-value" id="watchValue">Vamos!</div>
+              </div>
+              <div class="watch-apps" id="watchApps"></div>
+            </div>
+            <div class="hint-bubble" id="hintBubble">Procure o app: Relógio</div>
+          </div>
+        </div>
+        <div class="strap bottom"></div>
+        <div class="completion-ribbon" id="completionRibbon"></div>
+      </section>
+
+      <aside class="panel action-pad">
+        <div class="choice-title" id="choiceTitle">Escolha a configuração</div>
+        <div class="choice-grid" id="choiceGrid"></div>
+        <button class="reset-btn" id="resetBtn" type="button">↻ Recomeçar fase</button>
+      </aside>
+    </section>
+  </main>
+
+  <div class="victory-overlay" id="victoryOverlay">
+    <div class="victory-card">
+      <span class="victory-emoji">🎉</span>
+      <div class="victory-title">Smartwatch pronto!</div>
+      <div class="victory-subtitle" id="victorySubtitle"></div>
+      <div class="stars-display">
+        <span class="star-big" id="star1">⭐</span>
+        <span class="star-big" id="star2">⭐</span>
+        <span class="star-big" id="star3">⭐</span>
+      </div>
+      <div class="victory-btns">
+        <button class="btn btn-secondary" id="btnReplay" type="button">🔄 Jogar de novo</button>
+        <a href="../index.html" class="btn btn-primary">🏠 Menu</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const missions = [
+      {
+        id: 'time',
+        app: 'Relógio',
+        emoji: '⏰',
+        icon: '🕘',
+        buttonClass: 'color-time',
+        task: 'Ajustar as horas',
+        hint: 'Procure o app: Relógio',
+        title: 'Que horas vamos mostrar?',
+        subtitle: 'Um smartwatch ajuda a ver as horas.',
+        value: '09:30',
+        options: [
+          { text: '🕘 09:30', correct: true },
+          { text: '🌙 23:10', correct: false },
+          { text: '🍽️ Almoço', correct: false }
+        ],
+        success: 'Hora certinha!'
+      },
+      {
+        id: 'steps',
+        app: 'Passos',
+        emoji: '👟',
+        icon: '🚶',
+        buttonClass: 'color-steps',
+        task: 'Ativar contador de passos',
+        hint: 'Agora toque no app: Passos',
+        title: 'Como contar passos?',
+        subtitle: 'O relógio conta quando caminhamos.',
+        value: '0 👟',
+        options: [
+          { text: '👟 Contar passos', correct: true },
+          { text: '📺 Ver desenho', correct: false },
+          { text: '🔌 Desligar', correct: false }
+        ],
+        success: 'Passos ativados!'
+      },
+      {
+        id: 'heart',
+        app: 'Coração',
+        emoji: '❤️',
+        icon: '💓',
+        buttonClass: 'color-heart',
+        task: 'Ver batimentos',
+        hint: 'Agora toque no app: Coração',
+        title: 'O coração está batendo?',
+        subtitle: 'Batimentos mostram o tum-tum do corpo.',
+        value: '72 bpm',
+        options: [
+          { text: '💓 Medir batimentos', correct: true },
+          { text: '🌧️ Fazer chover', correct: false },
+          { text: '🎮 Abrir jogo', correct: false }
+        ],
+        success: 'Tum-tum medido!'
+      },
+      {
+        id: 'water',
+        app: 'Água',
+        emoji: '💧',
+        icon: '🥤',
+        buttonClass: 'color-water',
+        task: 'Criar lembrete de água',
+        hint: 'Por fim, toque no app: Água',
+        title: 'Qual lembrete é saudável?',
+        subtitle: 'O smartwatch pode lembrar de beber água.',
+        value: '💧',
+        options: [
+          { text: '💧 Beber água', correct: true },
+          { text: '🍬 Comer doces', correct: false },
+          { text: '🛌 Dormir na aula', correct: false }
+        ],
+        success: 'Lembrete criado!'
+      }
+    ];
+
+    let current = 0;
+    let selectedApp = null;
+    let errors = 0;
+    let completed = new Set();
+    let audioCtx = null;
+
+    const screen = document.getElementById('watchScreen');
+    const taskList = document.getElementById('taskList');
+    const watchApps = document.getElementById('watchApps');
+    const choiceGrid = document.getElementById('choiceGrid');
+    const choiceTitle = document.getElementById('choiceTitle');
+    const hintBubble = document.getElementById('hintBubble');
+    const completionRibbon = document.getElementById('completionRibbon');
+    const errorCount = document.getElementById('errorCount');
+    const bigIcon = document.getElementById('bigIcon');
+    const watchTitle = document.getElementById('watchTitle');
+    const watchSubtitle = document.getElementById('watchSubtitle');
+    const watchValue = document.getElementById('watchValue');
+
+    function init() {
+      renderTasks();
+      renderApps();
+      renderDots();
+      updateMissionView();
+      document.getElementById('resetBtn').addEventListener('click', resetGame);
+      document.getElementById('btnReplay').addEventListener('click', () => window.location.reload());
+      setInterval(updateClock, 15000);
+      updateClock();
+    }
+
+    function renderTasks() {
+      taskList.innerHTML = missions.map((m, index) => `
+        <div class="task-row" id="task-${m.id}">
+          <span class="task-icon">${index + 1}</span>
+          <span>${m.task}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderApps() {
+      watchApps.innerHTML = missions.map((m) => `
+        <button class="app-btn ${m.buttonClass}" data-app="${m.id}" type="button" aria-label="Abrir ${m.app}">
+          <span>${m.emoji}</span>
+          <span>${m.app}</span>
+        </button>
+      `).join('');
+
+      watchApps.querySelectorAll('.app-btn').forEach(btn => {
+        btn.addEventListener('click', () => chooseApp(btn.dataset.app));
+      });
+    }
+
+    function renderDots() {
+      completionRibbon.innerHTML = missions.map((m) => `<span class="mini-dot" id="dot-${m.id}"></span>`).join('');
+    }
+
+    function updateMissionView() {
+      const mission = missions[current];
+      selectedApp = null;
+      bigIcon.textContent = mission.icon;
+      watchTitle.textContent = mission.title;
+      watchSubtitle.textContent = mission.subtitle;
+      watchValue.textContent = mission.value;
+      hintBubble.textContent = mission.hint;
+      choiceTitle.textContent = '1º toque no app certo';
+      choiceGrid.innerHTML = '<button class="choice-btn" type="button" id="helperChoice">👈 Primeiro escolha no relógio</button>';
+      document.getElementById('helperChoice').addEventListener('click', () => chooseOption(-1));
+
+      document.querySelectorAll('.app-btn').forEach(btn => {
+        const id = btn.dataset.app;
+        btn.classList.toggle('done', completed.has(id));
+        btn.classList.toggle('needed', id === mission.id);
+      });
+    }
+
+    function chooseApp(appId) {
+      unlockAudio();
+      const mission = missions[current];
+      if (appId !== mission.id) {
+        wrongFeedback('Ops! Esse app é para outra missão.');
+        return;
+      }
+
+      selectedApp = appId;
+      correctFeedback();
+      choiceTitle.textContent = '2º escolha a configuração certa';
+      hintBubble.textContent = 'Muito bem! Agora escolha embaixo.';
+      renderChoices(mission);
+    }
+
+    function renderChoices(mission) {
+      choiceGrid.innerHTML = mission.options.map((option, index) => `
+        <button class="choice-btn" type="button" data-index="${index}">${option.text}</button>
+      `).join('');
+
+      choiceGrid.querySelectorAll('.choice-btn').forEach(btn => {
+        btn.addEventListener('click', () => chooseOption(Number(btn.dataset.index)));
+      });
+    }
+
+    function chooseOption(index) {
+      unlockAudio();
+      const mission = missions[current];
+      if (!selectedApp) {
+        wrongFeedback('Primeiro toque no app certo no relógio.');
+        return;
+      }
+
+      const option = mission.options[index];
+      if (!option.correct) {
+        wrongFeedback('Quase! Escolha a opção mais saudável ou útil.');
+        return;
+      }
+
+      completed.add(mission.id);
+      document.getElementById('task-' + mission.id).classList.add('done');
+      document.getElementById('task-' + mission.id).querySelector('.task-icon').textContent = '✓';
+      document.getElementById('dot-' + mission.id).classList.add('done');
+      const appBtn = document.querySelector(`[data-app="${mission.id}"]`);
+      appBtn.classList.add('done');
+      appBtn.classList.remove('needed');
+
+      bigIcon.textContent = '✅';
+      watchTitle.textContent = mission.success;
+      watchSubtitle.textContent = 'Função configurada com sucesso.';
+      watchValue.textContent = 'OK!';
+      hintBubble.textContent = 'Mandou bem!';
+      correctFeedback();
+
+      if (current === missions.length - 1) {
+        setTimeout(triggerVictory, 850);
+      } else {
+        current += 1;
+        setTimeout(updateMissionView, 900);
+      }
+    }
+
+    function wrongFeedback(message) {
+      errors += 1;
+      errorCount.textContent = errors;
+      hintBubble.textContent = message;
+      playSound('wrong');
+      screen.classList.remove('shake-red');
+      void screen.offsetWidth;
+      screen.classList.add('shake-red');
+    }
+
+    function correctFeedback() {
+      playSound('correct');
+      screen.classList.remove('flash-green');
+      void screen.offsetWidth;
+      screen.classList.add('flash-green');
+    }
+
+    function calcStars() {
+      if (errors === 0) return 3;
+      if (errors <= 2) return 2;
+      return 1;
+    }
+
+    function triggerVictory() {
+      const stars = calcStars();
+      localStorage.setItem('phase6_done', 'true');
+      localStorage.setItem('phase6_stars', String(stars));
+
+      const messages = {
+        3: 'Perfeito! Você configurou tudo sem errar!',
+        2: 'Muito bem! Seu smartwatch ficou lindo!',
+        1: 'Boa! Você terminou e aprendeu bastante!'
+      };
+      document.getElementById('victorySubtitle').textContent = messages[stars];
+      playSound('victory');
+      launchFireworksShow();
+
+      setTimeout(() => {
+        document.getElementById('victoryOverlay').classList.add('show');
+        showStars(stars);
+      }, 500);
+    }
+
+    function showStars(stars) {
+      for (let i = 1; i <= 3; i++) {
+        const star = document.getElementById('star' + i);
+        star.classList.remove('earned');
+        if (i <= stars) {
+          setTimeout(() => {
+            star.classList.add('earned');
+            playSound('correct');
+          }, i * 280);
+        }
+      }
+    }
+
+    function resetGame() {
+      current = 0;
+      selectedApp = null;
+      errors = 0;
+      completed = new Set();
+      errorCount.textContent = '0';
+      renderTasks();
+      renderDots();
+      updateMissionView();
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('watchClock').textContent = `${h}:${m}`;
+    }
+
+    function unlockAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playSound(type) {
+      if (!audioCtx) return;
+
+      if (type === 'victory') {
+        [523, 659, 784, 1047].forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          const t = audioCtx.currentTime + i * 0.13;
+          gain.gain.setValueAtTime(0, t);
+          gain.gain.linearRampToValueAtTime(0.32, t + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          osc.start(t);
+          osc.stop(t + 0.38);
+        });
+        return;
+      }
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(659, audioCtx.currentTime + 0.08);
+        osc.frequency.setValueAtTime(784, audioCtx.currentTime + 0.16);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.32);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.34);
+      } else {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(210, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.26);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.28);
+      }
+    }
+
+    function launchFirework(x, y) {
+      const colors = ['#FF6B6B', '#FFE66D', '#4ECDC4', '#A8E6CF', '#FF9FF3', '#C3B1E1', '#95D5B2'];
+      const container = document.getElementById('fireworks');
+
+      for (let i = 0; i < 18; i++) {
+        const spark = document.createElement('div');
+        const angle = (i / 18) * Math.PI * 2;
+        const dist = 60 + Math.random() * 70;
+        spark.style.cssText = `
+          position:absolute;
+          left:${x}px;
+          top:${y}px;
+          width:${5 + Math.random() * 7}px;
+          height:${5 + Math.random() * 7}px;
+          border-radius:50%;
+          background:${colors[i % colors.length]};
+          --dx:${Math.cos(angle) * dist}px;
+          --dy:${Math.sin(angle) * dist}px;
+          animation:spark-fly ${0.65 + Math.random() * 0.35}s ease-out forwards;
+        `;
+        container.appendChild(spark);
+        setTimeout(() => spark.remove(), 1200);
+      }
+    }
+
+    function launchFireworksShow() {
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      [[0.18,0.28],[0.78,0.22],[0.5,0.34],[0.28,0.58],[0.72,0.55],[0.5,0.72]].forEach(([x, y], i) => {
+        setTimeout(() => launchFirework(W * x, H * y), i * 170);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

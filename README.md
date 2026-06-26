@@ -30,7 +30,7 @@ congif-game-davi/
 ├── phase4/
 │   └── phase.html              ← 🤖 Programar o robô (Visual coding)
 ├── phase5/
-│   └── phase.html              ← 🧠 Falar com a IA (Chat Anthropic API)
+│   └── phase.html              ← 🧠 Falar com a IA (Chat Gemini API)
 │
 ├── docs/
 │   └── techkid_game_spec.html  ← Especificação completa das 5 fases
@@ -75,7 +75,7 @@ Abra o `index.html` diretamente no navegador (sem servidor necessário).
 | 2    | Conectar o Wi-Fi     | 🔜 Em breve   |
 | 3    | Montar o Computador  | 🔜 Em breve   |
 | 4    | Programar o Robô     | 🔜 Em breve   |
-| 5    | Falar com a IA       | 🔜 Em breve   |
+| 5    | Falar com a IA       | ✅ Feito       |
 
 ## Para Implementar uma Nova Fase
 

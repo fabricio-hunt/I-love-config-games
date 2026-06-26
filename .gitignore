@@ -1,6 +1,14 @@
+# ─── Environment files (NEVER commit) ─────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
 # ─── API Keys (NEVER commit) ──────────────────────────────────────────────
 config.js
 config.local.js
+
+# ─── Python virtual environment ───────────────────────────────────────────
+.venv/
 
 # ─── OS & Editor ──────────────────────────────────────────────────────────
 .DS_Store
@@ -11,3 +19,6 @@ Thumbs.db
 # ─── Node (if tooling is ever added) ─────────────────────────────────────
 node_modules/
 npm-debug.log*
+
+# ─── Vercel ───────────────────────────────────────────────────────────────
+.vercel

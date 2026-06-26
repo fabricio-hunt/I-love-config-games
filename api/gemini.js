@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         if (!msg || !msg.content) continue;
         contents.push({
           role: msg.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: String(msg.content).slice(0, 500) }],
+          parts: [{ text: String(msg.content).slice(0, 800) }],
         });
       }
     }
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       contents,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
-        maxOutputTokens: 300,
+        maxOutputTokens: 200,
         temperature: 0.7,
       },
     });

@@ -431,22 +431,22 @@
     {
       id: 5,
       emoji: "🧠",
-      title: "Fase 5 — Falar com a IA",
-      sub: "Chat com Claude via API",
+      title: "Fase 5 — Conversa com o robô",
+      sub: "Escolha a resposta certa",
       color: "#C3B1E1",
       colorChip: "chip-p",
       now: false,
-      desc: "A criança conversa com um robozinho de IA (prompt infantil no sistema). Digita ou clica em perguntas prontas (botões grandes). A IA responde sempre de forma simples, curtinha, com emojis. Usa a API da Anthropic.",
+      desc: "A criança escolhe a resposta correta entre 3 opções para 6 perguntas do robô sobre tecnologia (computador, internet, robô, celular, apps e programação). Respostas simuladas em português, sempre infantis.",
       mechanics: [
-        { k: "Interface", v: "Chat estilo balão, robô à esquerda, criança à direita" },
-        { k: "Entrada", v: "3–4 botões de perguntas prontas + campo de texto simples" },
-        { k: "Modelo", v: "claude-haiku-4-5 (rápido e barato)" },
-        { k: "System prompt", v: "Você é Robô Amigo. Responda em 1–2 frases curtinhas, com emojis, para uma criança de 5 anos." },
-        { k: "API key", v: "Config.js local (não commitado)" },
-        { k: "Limite", v: "Máx 10 mensagens por sessão, botão resetar" },
+        { k: "Interface", v: "Robô com balão de fala e rosto expressivo" },
+        { k: "Interação", v: "Clique em botões grandes com 3 opções de resposta" },
+        { k: "Perguntas", v: "6 perguntas fixas sobre tecnologia com respostas simuladas" },
+        { k: "Feedback", v: "Balão verde ao acertar, vermelho com shake ao errar" },
+        { k: "Estrelas", v: "3 sem erro · 2 com até 2 erros · 1 com 3+ erros" },
+        { k: "Vitória", v: "Robô celebra → fogos CSS + som de vitória + modal" },
       ],
-      ai_prompt: "Crie HTML único de chat infantil com a API Anthropic (fetch para /v1/messages). Robô responde em 1-2 frases com emojis. Botões de perguntas prontas grandes. System prompt infantil. Balões de conversa. Paleta #C3B1E1. Fonte Nunito. Botão voltar. Para 5 anos.",
-      chips: ["Claude Haiku", "Botões de perguntas", "Balões de chat", "System prompt infantil"]
+      ai_prompt: "Crie HTML único de jogo infantil simulando conversa com robô. 6 perguntas sobre tecnologia com 3 opções cada. Respostas pré-definidas em português. Sem API externa. Balão de fala animado. Paleta #C3B1E1. Fonte Nunito. Sons Web Audio API. Fogos CSS. LocalStorage phase5_done e phase5_stars. Botão voltar. Para 5 anos.",
+      chips: ["6 perguntas fixas", "Respostas simuladas", "Balão expressivo", "Sem API externa"]
     },
     {
       id: 6,
